@@ -35,3 +35,12 @@ draperweb_phx-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Deployed assets
+/priv/static/images/logo-*.svg
+/priv/static/**/*.gz
+/priv/static/favicon-*.ico
+/priv/static/robots-*.txt
+
+# Development files
+.vscode/settings.json
+.elixir_ls/
