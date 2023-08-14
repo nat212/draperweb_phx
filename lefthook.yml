@@ -7,8 +7,10 @@ pre-push:
   commands:
     test:
       tags: backend tests
-      glob: "*.{ex,exs}"
-      run: MIX_ENV=test mix test
+      glob: "*.{ex,exs,lock}"
+      env:
+        MIX_ENV: test
+      run: mix test
 
 pre-commit:
   parallel: true
@@ -17,13 +19,17 @@ pre-commit:
       tags: assets style
       root: "assets/"
       glob: "*.{js,ts}"
-      run: npx eslint --fix {staged_files} && git add {staged_files}
+      run: npx eslint --fix {staged_files}
+      stage_fixed: true
     prettier:
       tags: assets style
       root: "assets/"
       glob: "*.{js,ts,json,html,css,scss}"
-      run: npx prettier --write {staged_files} && git add {staged_files}
+      run: npx prettier --write {staged_files}
+      stage_fixed: true
     format:
       tags: backend style
-      glob: "*.{ex,exs}"
-      run: mix format {staged_files} && git add {staged_files}
+      exclude: "assets/"
+      glob: "*.{ex,exs,lock}"
+      run: mix format {staged_files}
+      stage_fixed: true
