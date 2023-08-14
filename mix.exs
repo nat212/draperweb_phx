@@ -19,7 +19,7 @@ defmodule DraperwebPhx.MixProject do
   def application do
     [
       mod: {DraperwebPhx.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :inets]
     ]
   end
 
@@ -52,7 +52,8 @@ defmodule DraperwebPhx.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:assent, "~> 0.2.3"},
       {:certifi, "~> 2.4"},
-      {:ssl_verify_fun, "~> 1.1"}
+      {:ssl_verify_fun, "~> 1.1"},
+      {:dotenvy, "~> 0.8.0"}
     ]
   end
 

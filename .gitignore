@@ -41,6 +41,8 @@ npm-debug.log
 /priv/static/favicon-*.ico
 /priv/static/robots-*.txt
 
-# Development files
+# Development/environment files
 .vscode/settings.json
 .elixir_ls/
+.env.*
+!.env.test
