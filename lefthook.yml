@@ -7,6 +7,7 @@ pre-push:
   commands:
     test:
       tags: backend tests
+      glob: "*.{ex,exs}"
       run: MIX_ENV=test mix test
 
 pre-commit:
