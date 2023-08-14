@@ -34,6 +34,9 @@
 			"installDockerBuildx": true,
 			"version": "latest",
 			"dockerDashComposeVersion": "v2"
+		},
+		"ghcr.io/devcontainers-contrib/features/lefthook-asdf:1": {
+			"version": "latest"
 		}
 	}
 }

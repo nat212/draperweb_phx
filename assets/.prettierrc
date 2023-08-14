@@ -1,0 +1,9 @@
+{
+  "trailingComma": "all",
+  "editorconfig": true,
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "htmlWhitespaceSensitivity": "css",
+  "printWidth": 140,
+  "semi": true
+}

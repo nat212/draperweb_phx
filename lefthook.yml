@@ -1,0 +1,28 @@
+# EXAMPLE USAGE:
+#
+#   Refer for explanation to following link:
+#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+#
+pre-push:
+  commands:
+    test:
+      tags: backend tests
+      run: MIX_ENV=test mix test
+
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      tags: assets style
+      root: "assets/"
+      glob: "*.{js,ts}"
+      run: npx eslint --fix {staged_files} && git add {staged_files}
+    prettier:
+      tags: assets style
+      root: "assets/"
+      glob: "*.{js,ts,json,html,css,scss}"
+      run: npx prettier --write {staged_files} && git add {staged_files}
+    format:
+      tags: backend style
+      glob: "*.{ex,exs}"
+      run: mix format {staged_files} && git add {staged_files}
