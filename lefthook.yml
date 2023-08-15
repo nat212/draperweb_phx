@@ -33,3 +33,6 @@ pre-commit:
       glob: "*.{ex,exs,lock}"
       run: mix format {staged_files}
       stage_fixed: true
+    gitleaks:
+      tags: security
+      run: gitleaks --config gitleaks.toml -v
