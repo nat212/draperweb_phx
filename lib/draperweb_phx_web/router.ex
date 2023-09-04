@@ -10,6 +10,13 @@ defmodule DraperwebPhxWeb.Router do
     plug :put_root_layout, html: {DraperwebPhxWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+
+    plug PowAssent.Plug.Reauthorization,
+      handler: PowAssent.Phoenix.ReauthorizationPlugHandler
+  end
+
+  pipeline :external do
+    plug :put_layout, html: {DraperwebPhxWeb.Layouts, :session}
   end
 
   pipeline :api do
@@ -35,9 +42,9 @@ defmodule DraperwebPhxWeb.Router do
   end
 
   scope "/" do
-    pipe_through :browser
+    pipe_through [:browser, :external]
 
-    pow_routes()
+    pow_session_routes()
     pow_assent_routes()
   end
 

@@ -60,6 +60,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :draperweb_phx, :pow,
+  web_module: DraperwebPhxWeb,
   user: DraperwebPhx.Users.User,
   repo: DraperwebPhx.Repo
 

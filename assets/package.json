@@ -3,5 +3,8 @@
     "eslint": "^8.47.0",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.1"
+  },
+  "dependencies": {
+    "daisyui": "^3.6.4"
   }
 }

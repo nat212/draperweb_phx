@@ -3,3 +3,7 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+.login-container {
+  @apply w-screen h-screen flex flex-col items-center justify-center;
+  background-image: url(/images/login-bg.png);
+}

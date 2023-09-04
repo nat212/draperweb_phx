@@ -1,0 +1,8 @@
+<div class="rounded-xl flex flex-col align-center p-10 gap-4 bg-base-300">
+  <.header class="text-center">
+    Sign in
+  </.header>
+
+  <%= for link <- PowAssent.Phoenix.ViewHelpers.provider_links(@conn, class: "btn btn-primary"),
+          do: content_tag(:span, link) %>
+</div>
