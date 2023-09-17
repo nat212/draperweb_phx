@@ -25,6 +25,7 @@ env:
   DB_DATABASE: wrench_test
   ELIXIR_VERSION: 1.15.3
   OTP_VERSION: 26
+  NODE_VERSION: 18
 
 # permissions:
 #   contents: read
@@ -95,15 +96,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Check for credential leaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Disabled until I can figure out a license.
+      # - name: Check for credential leaks
+      #   uses: gitleaks/gitleaks-action@v2
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: 'assets/package-lock.json'
 
