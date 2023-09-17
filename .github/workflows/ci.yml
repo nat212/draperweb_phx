@@ -23,6 +23,8 @@ env:
   DB_USER: postgres
   DB_PASSWORD: postgres
   DB_DATABASE: wrench_test
+  ELIXIR_VERSION: 1.15.3
+  OTP_VERSION: 26
 
 # permissions:
 #   contents: read
@@ -76,11 +78,7 @@ jobs:
 
     # runs-on: ${{ needs.start-runner.outputs.label }}
     runs-on: ubuntu-latest
-    name: Test on OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
-    strategy:
-      matrix:
-        otp: ['26']
-        elixir: ['1.15.3']
+    name: Test on OTP ${{ env.OTP_VERSION }} / Elixir ${{ env.ELIXIR_VERSION }}
 
     # These are needed for Elixir
     env:
@@ -91,8 +89,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{ matrix.otp }}
-          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ env.OTP_VERSION }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
 
       - name: Checkout
         uses: actions/checkout@v3
