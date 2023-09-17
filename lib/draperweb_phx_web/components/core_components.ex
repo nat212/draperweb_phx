@@ -116,26 +116,28 @@ defmodule DraperwebPhxWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class={[
-        "fixed top-2 right-2 w-80 sm:w-96 z-50 alert shadow-lg",
+      class="fixed top-2 right-2 w-80 sm:w-96"
+      {@rest}
+    >
+      <div class={[
+        "alert z-50 shadow-lg",
         @kind == :info && "alert-info",
         @kind == :error && "alert-error",
         @kind == :success && "alert-success",
         @kind == :warning && "alert-warning"
-      ]}
-      {@rest}
-    >
-      <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-6 w-6" />
-      <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-6 w-6" />
-      <div>
-        <h3 :if={@title} class="font-bold">
-          <%= @title %>
-        </h3>
-        <div class="text-xs"><%= msg %></div>
+      ]}>
+        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-6 w-6" />
+        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-6 w-6" />
+        <div>
+          <h3 :if={@title} class="font-bold">
+            <%= @title %>
+          </h3>
+          <div class="text-xs"><%= msg %></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-ghost btn-square" aria-label={gettext("close")}>
+          <.icon name="hero-x-mark-solid" class="h-6 w-6" />
+        </button>
       </div>
-      <button type="button" class="btn btn-sm btn-ghost btn-square" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="h-6 w-6" />
-      </button>
     </div>
     """
   end
