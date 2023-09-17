@@ -120,8 +120,8 @@ end
 config :draperweb_phx, :pow_assent,
   providers: [
     draper_auth: [
-      client_id: env!("DRAPER_AUTH_CLIENT_ID"),
-      client_secret: env!("DRAPER_AUTH_CLIENT_SECRET"),
+      client_id: env!("DRAPER_AUTH_CLIENT_ID", :string, ""),
+      client_secret: env!("DRAPER_AUTH_CLIENT_SECRET", :string, ""),
       strategy: DraperwebPhx.Providers.DraperAuth
     ]
   ]
