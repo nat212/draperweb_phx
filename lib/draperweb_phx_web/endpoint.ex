@@ -47,5 +47,6 @@ defmodule DraperwebPhxWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+  plug Pow.Plug.Session, otp_app: :draperweb_phx
   plug DraperwebPhxWeb.Router
 end

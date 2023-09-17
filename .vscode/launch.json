@@ -10,7 +10,7 @@
       "debugAutoInterpretAllModules": false,
       "excludeModules": ["Bcrypt.Base"],
       "env": {
-        "MIX_ENV": "dev"
+        "MIX_ENV": "dev",
       }
     },
     {

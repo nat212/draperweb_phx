@@ -50,10 +50,12 @@ defmodule DraperwebPhx.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:assent, "~> 0.2.3"},
+      {:dotenvy, "~> 0.8.0"},
+      # Pow auth
+      {:pow, "~> 1.0.31"},
+      {:pow_assent, "~> 0.4.17"},
       {:certifi, "~> 2.4"},
-      {:ssl_verify_fun, "~> 1.1"},
-      {:dotenvy, "~> 0.8.0"}
+      {:ssl_verify_fun, "~> 1.1"}
     ]
   end
 
@@ -70,7 +72,11 @@ defmodule DraperwebPhx.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.setup": [
+        "tailwind.install --if-missing",
+        "esbuild.install --if-missing",
+        "cmd npm i --prefix assets"
+      ],
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]

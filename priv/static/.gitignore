@@ -1,0 +1,8 @@
+**/*.gz
+favicon-*.ico
+robots-*.txt
+
+# Images
+images/logo-*.svg
+images/bushy-transparent-*.png
+images/login-bg-*.png

@@ -35,4 +35,4 @@ pre-commit:
       stage_fixed: true
     gitleaks:
       tags: security
-      run: gitleaks --config gitleaks.toml -v
+      run: gitleaks --config gitleaks.toml -v detect

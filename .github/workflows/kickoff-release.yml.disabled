@@ -1,0 +1,68 @@
+# Kept for reference
+# name: Kickoff release
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       version:
+#         description: Version number (e.g 1.0.1)
+#         required: true
+
+# jobs:
+#   create-branch:
+#     runs-on: ubuntu-latest
+
+#     env:
+#       BRANCH: release/v${{ github.event.inputs.version }}
+
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#         with:
+#           token: ${{ secrets.PAT }}
+#           clean: true
+
+#       - name: Create release branch
+#         run: git checkout -b ${{ env.BRANCH }}
+
+#       - name: Initialise mandatory git config
+#         run: |
+#           git config user.name 'GitHub Actions'
+#           git config user.email 'noreply@github.com'
+
+#       - name: Bump version number
+#         run: |
+#           sed -i 's/version: ".*"/version: "${{ github.event.inputs.version }}"/' mix.exs
+
+#       - name: Commit updates
+#         id: make-commit
+#         run: |
+#           git add mix.exs
+#           git commit --message "Prepare release ${{ github.event.inputs.version }}"
+
+#       - name: Push new branch
+#         uses: ad-m/github-push-action@master
+#         with:
+#           github_token: ${{ secrets.PAT }}
+#           branch: ${{ env.BRANCH }}
+
+#       - name: Create pull request into main
+#         uses: thomaseizinger/create-pull-request@master
+#         with:
+#           github_token: ${{ secrets.PAT }}
+#           head: ${{ env.BRANCH }}
+#           base: main
+#           title: v${{ github.event.inputs.version }} release (main)
+#           body: |
+#             This PR was created in response to a workflow.
+#             Version has been bumped and pushed on this branch.
+
+#       - name: Create pull request into develop
+#         uses: thomaseizinger/create-pull-request@master
+#         with:
+#           github_token: ${{ secrets.PAT }}
+#           head: ${{ env.BRANCH }}
+#           base: develop
+#           title: v${{ github.event.inputs.version }} release (develop)
+#           body: |
+#             This PR was created in response to a workflow.
+#             Version has been bumped and pushed on this branch.

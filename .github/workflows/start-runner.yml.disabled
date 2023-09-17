@@ -1,0 +1,64 @@
+# Kept for reference
+# name: Start Runner
+
+# on:
+#   workflow_call:
+#     inputs:
+#       instance-type:
+#         required: true
+#         type: string
+#       image-id:
+#         required: true
+#         type: string
+#       subnet-id:
+#         required: true
+#         type: string
+#       security-group-id:
+#         required: true
+#         type: string
+
+#     secrets:
+#       GH_PAT:
+#         required: true
+#       AWS_ACCESS_KEY_ID:
+#         required: true
+#       AWS_SECRET_ACCESS_KEY:
+#         required: true
+#       AWS_REGION:
+#         required: true
+
+#     outputs:
+#       label:
+#         description: "The self hosted runner label"
+#         value: ${{ jobs.start-runner.outputs.label }}
+#       instance-id:
+#         description: "The EC2 instance ID"
+#         value: ${{ jobs.start-runner.outputs.instance-id }}
+
+
+# jobs:
+#   start-runner:
+#     runs-on: ubuntu-latest
+#     name: Start Runner
+#     outputs:
+#       label: ${{ steps.start-runner.outputs.label }}
+#       instance-id: ${{ steps.start-runner.outputs.ec2-instance-id }}
+
+#     steps:
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ secrets.AWS_REGION }}
+
+#       - name: Start EC2 runner
+#         id: start-runner
+#         uses: machulav/ec2-github-runner@v2
+#         with:
+#           mode: start
+#           github-token: ${{ secrets.GH_PAT }}
+#           ec2-image-id: ${{ inputs.image-id }}
+#           ec2-instance-type: ${{ inputs.instance-type }}
+#           subnet-id: ${{ inputs.subnet-id }}
+#           security-group-id: ${{ inputs.security-group-id }}

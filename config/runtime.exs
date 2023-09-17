@@ -23,8 +23,6 @@ if env!("PHX_SERVER", :boolean, false) do
   config :draperweb_phx, DraperwebPhxWeb.Endpoint, server: true
 end
 
-oauth_redirect_origin = env!("OAUTH_REDIRECT_ORIGIN", :string, "http://localhost:4000")
-
 if config_env() == :prod do
   database_url = env!("DATABASE_URL", :string)
   # env!("DATABASE_URL") ||
@@ -119,10 +117,11 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
 
-config :draperweb_phx, :strategies,
-  draper_auth: [
-    client_id: env!("DRAPER_AUTH_CLIENT_ID", :string),
-    client_secret: env!("DRAPER_AUTH_CLIENT_SECRET", :string),
-    strategy: Assent.Strategy.OIDC,
-    redirect_uri: "#{oauth_redirect_origin}/oauth/callback"
+config :draperweb_phx, :pow_assent,
+  providers: [
+    draper_auth: [
+      client_id: env!("DRAPER_AUTH_CLIENT_ID", :string, ""),
+      client_secret: env!("DRAPER_AUTH_CLIENT_SECRET", :string, ""),
+      strategy: DraperwebPhx.Providers.DraperAuth
+    ]
   ]
