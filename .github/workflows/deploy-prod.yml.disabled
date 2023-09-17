@@ -1,0 +1,62 @@
+# Kept for reference
+# name: Prod Deploy
+
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths-ignore:
+#       - .github/workflows/ci.yaml
+#       - .github/workflows/deploy-dev.yaml
+#       - .vscode/**/*
+#       - test/**/*
+#       - .formatter.exs
+#       - .gitignore
+#       - README.md
+#       - docker-compose.yml
+#       - Makefile
+#       - config/dev.exs
+#       - config/test.exs
+
+# jobs:
+#   start-runner:
+#     uses: ./.github/workflows/start-runner.yml
+#     secrets:
+#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACTIONS_KEY }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACTIONS_SECRET }}
+#       AWS_REGION: ${{ secrets.AWS_REGION }}
+#       GH_PAT: ${{ secrets.ACTIONS_PAT }}
+#     with:
+#       image-id: ${{ vars.AWS_ACTIONS_AMI_ID }}
+#       instance-type: ${{ vars.AWS_ACTIONS_INSTANCE_TYPE }}
+#       security-group-id: ${{ vars.AWS_ACTIONS_SG_ID }}
+#       subnet-id: ${{ vars.AWS_ACTIONS_SUBNET_ID }}
+
+#   stop-runner:
+#     uses: ./.github/workflows/stop-runner.yml
+#     if: ${{ always() }}
+#     needs:
+#       - start-runner
+#       - deploy
+#     secrets:
+#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACTIONS_KEY }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACTIONS_SECRET }}
+#       AWS_REGION: ${{ secrets.AWS_REGION }}
+#       GH_PAT: ${{ secrets.ACTIONS_PAT }}
+#     with:
+#       label: ${{ needs.start-runner.outputs.label }}
+#       instance-id: ${{ needs.start-runner.outputs.instance-id }}
+
+#   deploy:
+#     name: Deploy wrench
+#     needs:
+#       - start-runner
+#     runs-on: ${{ needs.start-runner.outputs.label }}
+#     env:
+#       HOME: /root
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: superfly/flyctl-actions/setup-flyctl@master
+#       - run: flyctl deploy -c fly.prod.toml --remote-only
+#         env:
+#           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

@@ -1,0 +1,162 @@
+name: CI
+
+on:
+  push:
+    branches: ["develop"]
+  pull_request:
+    branches: ["develop", "main"]
+    paths-ignore:
+      - .github/workflows/*.yml
+      - '!.github/workflows/ci.yml'
+      - .vscode/**/*
+      - rel/**/*
+      - .dockerignore
+      - .gitignore
+      - docker-compose.yml
+      - Dockerfile
+      - README.md
+      - config/dev.exs
+      - config/prod.exs
+
+env:
+  MIX_ENV: test
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_DATABASE: wrench_test
+
+# permissions:
+#   contents: read
+
+jobs:
+  # start-runner:
+  #   uses: ./.github/workflows/start-runner.yml
+  #   secrets:
+  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACTIONS_KEY }}
+  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACTIONS_SECRET }}
+  #     AWS_REGION: ${{ secrets.AWS_REGION }}
+  #     GH_PAT: ${{ secrets.ACTIONS_PAT }}
+  #   with:
+  #     image-id: ${{ vars.AWS_ACTIONS_AMI_ID }}
+  #     instance-type: ${{ vars.AWS_ACTIONS_INSTANCE_TYPE }}
+  #     security-group-id: ${{ vars.AWS_ACTIONS_SG_ID }}
+  #     subnet-id: ${{ vars.AWS_ACTIONS_SUBNET_ID }}
+
+  # stop-runner:
+  #   uses: ./.github/workflows/stop-runner.yml
+  #   if: ${{ always() }}
+  #   needs:
+  #     - start-runner
+  #     - test
+  #   secrets:
+  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACTIONS_KEY }}
+  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACTIONS_SECRET }}
+  #     AWS_REGION: ${{ secrets.AWS_REGION }}
+  #     GH_PAT: ${{ secrets.ACTIONS_PAT }}
+  #   with:
+  #     label: ${{ needs.start-runner.outputs.label }}
+  #     instance-id: ${{ needs.start-runner.outputs.instance-id }}
+
+
+  test:
+    # needs:
+    #   - start-runner
+    services:
+      db:
+        image: postgres:14
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_DATABASE: ${{ env.DB_DATABASE }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # runs-on: ${{ needs.start-runner.outputs.label }}
+    runs-on: ubuntu-latest
+    name: Test on OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    strategy:
+      matrix:
+        otp: ['26']
+        elixir: ['1.15.3']
+
+    # These are needed for Elixir
+    env:
+      HOME: /root
+      ImageOS: 'ubuntu22'
+
+    steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Check for credential leaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: 'assets/package-lock.json'
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v3
+        env:
+          CACHE_NAME: cache-elixir-deps
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.CACHE_NAME }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.CACHE_NAME }}-
+
+      - name: Cache compiled build
+        id: cache-build
+        uses: actions/cache@v3
+        env:
+          CACHE_NAME: cache-compiled-build
+        with:
+          path: _build
+          key: ${{ runner.os }}-mix-${{ env.CACHE_NAME }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.CACHE_NAME }}-
+            ${{ runner.os }}-mix-
+
+      # Force full recompile on builds that are retried.
+      - name: Bust cache on build retry
+        if: github.run_attempt != '1'
+        run: |
+          mix deps.clean --all
+          mix clean
+        shell: sh
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Install JS dependencies
+        run: npm ci
+        working-directory: assets
+
+      - name: Compile, treating warnings as errors
+        run: mix compile --warnings-as-errors
+
+      - name: Check formatting
+        run: mix format --check-formatted
+
+      - name: Compile assets
+        run: MIX_ENV=prod mix assets.deploy
+
+      - name: Run tests
+        run: mix test
+        env:
+          DATABASE_URL: ecto://${{ env.DB_USER }}:${{ env.DB_PASSWORD }}@localhost:5432/${{ env.DB_DATABASE }}
