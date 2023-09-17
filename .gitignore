@@ -38,5 +38,6 @@ npm-debug.log
 # Development/environment files
 .vscode/settings.json
 .elixir_ls/
+.env
 .env.*
 !.env.test
