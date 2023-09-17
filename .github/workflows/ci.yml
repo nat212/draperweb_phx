@@ -96,11 +96,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # Disabled until I can figure out a license.
-      # - name: Check for credential leaks
-      #   uses: gitleaks/gitleaks-action@v2
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check for credential leaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} 
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
