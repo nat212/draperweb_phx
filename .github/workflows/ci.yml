@@ -23,46 +23,9 @@ env:
   DB_USER: postgres
   DB_PASSWORD: postgres
   DB_DATABASE: wrench_test
-  ELIXIR_VERSION: 1.15.3
-  OTP_VERSION: 26
-  NODE_VERSION: 18
-
-# permissions:
-#   contents: read
 
 jobs:
-  # start-runner:
-  #   uses: ./.github/workflows/start-runner.yml
-  #   secrets:
-  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACTIONS_KEY }}
-  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACTIONS_SECRET }}
-  #     AWS_REGION: ${{ secrets.AWS_REGION }}
-  #     GH_PAT: ${{ secrets.ACTIONS_PAT }}
-  #   with:
-  #     image-id: ${{ vars.AWS_ACTIONS_AMI_ID }}
-  #     instance-type: ${{ vars.AWS_ACTIONS_INSTANCE_TYPE }}
-  #     security-group-id: ${{ vars.AWS_ACTIONS_SG_ID }}
-  #     subnet-id: ${{ vars.AWS_ACTIONS_SUBNET_ID }}
-
-  # stop-runner:
-  #   uses: ./.github/workflows/stop-runner.yml
-  #   if: ${{ always() }}
-  #   needs:
-  #     - start-runner
-  #     - test
-  #   secrets:
-  #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACTIONS_KEY }}
-  #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACTIONS_SECRET }}
-  #     AWS_REGION: ${{ secrets.AWS_REGION }}
-  #     GH_PAT: ${{ secrets.ACTIONS_PAT }}
-  #   with:
-  #     label: ${{ needs.start-runner.outputs.label }}
-  #     instance-id: ${{ needs.start-runner.outputs.instance-id }}
-
-
   test:
-    # needs:
-    #   - start-runner
     services:
       db:
         image: postgres:14
@@ -76,36 +39,37 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    
+    strategy:
+      matrix:
+        otp-version: [26]
+        elixir-version: [1.15.3]
+        node-version: [18]
 
-    # runs-on: ${{ needs.start-runner.outputs.label }}
     runs-on: ubuntu-latest
-    name: Test on OTP ${{ env.OTP_VERSION }} / Elixir ${{ env.ELIXIR_VERSION }}
-
-    # These are needed for Elixir
-    env:
-      HOME: /root
-      ImageOS: 'ubuntu22'
+    name: Test on OTP ${{ matrix.otp-version }} / Elixir ${{ matrix.elixir-version }} / Node ${{ matrix.node-version }}
 
     steps:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{ env.OTP_VERSION }}
-          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ matrix.otp-version }}
+          elixir-version: ${{ matrix.elixir-version }}
 
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Check for credential leaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} 
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ matrix.node-version }}
           cache: npm
           cache-dependency-path: 'assets/package-lock.json'
 
