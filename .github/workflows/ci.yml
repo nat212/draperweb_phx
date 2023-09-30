@@ -49,11 +49,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Test on OTP ${{ matrix.otp-version }} / Elixir ${{ matrix.elixir-version }} / Node ${{ matrix.node-version }}
 
-    # These are needed for Elixir
-    env:
-      HOME: /root
-      ImageOS: 'ubuntu22'
-
     steps:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
