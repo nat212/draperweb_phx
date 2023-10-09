@@ -40,9 +40,12 @@ RUN apt-get update \
   && ([ "${NODE_SCRIPT_SHA}" = "dev-mode" ] || (echo "${NODE_SCRIPT_SHA} */tmp/node-setup.sh" | sha256sum -c -)) \
   && /bin/bash /tmp/node-setup.sh "${NVM_DIR}" "${NODE_VERSION}" "${USERNAME}"; \
   fi \
+  # 
+  # Install lefthook
+  && curl -1sLf 'https://dl.cloudsmith.io/public/evilmartians/lefthook/setup.deb.sh' | bash \
   #
   # Install dependencies
-  && apt-get install -y build-essential inotify-tools \
+  && apt-get install -y build-essential inotify-tools lefthook \
   #
   # Clean up
   && apt-get autoremove -y \
