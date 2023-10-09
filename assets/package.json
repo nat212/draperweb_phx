@@ -5,6 +5,6 @@
     "prettier": "^3.0.1"
   },
   "dependencies": {
-    "daisyui": "^3.6.4"
+    "daisyui": "^3.9.2"
   }
 }

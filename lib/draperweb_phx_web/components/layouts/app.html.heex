@@ -2,14 +2,23 @@
   <input id="app-drawer" type="checkbox" class="drawer-toggle" />
   <header></header>
 
-  <main class="drawer-content px-4 py-20 sm:px-6 lg:px-8">
+  <main class="drawer-content h-screen relative flex flex-col items-stretch">
     <.flash_group flash={@flash} />
-    <%= @inner_content %>
+    <div class="navbar bg-base-100 shadow-xl">
+      <div class="flex-1">
+        <span class="normal-case text-xl">
+          <%= @page_title %>
+        </span>
+      </div>
+    </div>
+    <div class="flex-1 overflow-auto px-6 py-10 relative">
+      <%= @inner_content %>
+    </div>
   </main>
   <div class="drawer-side">
     <label for="app-drawer" class="drawer-overlay" />
     <ul class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-      <li><a href="/">Home</a></li>
+      <li><a class={@active_route == :home && "active"} href="/">Home</a></li>
       <li><a href="/budgets">Budgets</a></li>
     </ul>
   </div>
