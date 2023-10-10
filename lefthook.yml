@@ -30,7 +30,7 @@ pre-commit:
     format:
       tags: backend style
       exclude: "assets/"
-      glob: "*.{ex,exs,lock}"
+      glob: "*.{ex,exs,lock,heex}"
       run: mix format {staged_files}
       stage_fixed: true
     gitleaks:
