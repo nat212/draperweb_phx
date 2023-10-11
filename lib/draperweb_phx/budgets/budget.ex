@@ -22,7 +22,7 @@ defmodule DraperwebPhx.Budgets.Budget do
 
   @doc false
   defp validation(budget) do
-    if budget[:experimental] do
+    if budget |> get_change(:experimental) do
       budget
       |> validate_required([:slug, :name])
     else

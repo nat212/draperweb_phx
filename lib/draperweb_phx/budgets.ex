@@ -5,7 +5,6 @@ defmodule DraperwebPhx.Budgets do
 
   import Ecto.Query, warn: false
   alias DraperwebPhx.Repo
-  alias Ecto.UUID
 
   alias DraperwebPhx.Budgets.Budget
 
@@ -38,18 +37,6 @@ defmodule DraperwebPhx.Budgets do
   """
   def get_budget!(id), do: Repo.get!(Budget, id)
 
-  @doc """
-  Creates a budget.
-
-  ## Examples
-
-      iex> create_budget(%{field: value})
-      {:ok, %Budget{}}
-
-      iex> create_budget(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   defp create_budget(attrs) do
     %Budget{}
     |> Budget.changeset(attrs)
@@ -67,20 +54,20 @@ defmodule DraperwebPhx.Budgets do
     attrs
     |> Map.merge(%{
       experimental: true,
+      name: attrs[:name] |> String.trim(),
       slug: attrs[:name] |> sluggify(),
       date: nil
     })
     |> create_budget()
   end
 
-  def create_monthly_budget(attrs \\ %{}) do
-    attrs
-    |> Map.merge(%{
+  def create_monthly_budget(date \\ Date.utc_today()) do
+    %{
       experimental: false,
-      date: attrs[:date] |> Date.beginning_of_month(),
-      slug: attrs[:date] |> Calendar.strftime("%B-%Y") |> String.downcase(),
-      name: attrs[:date] |> Calendar.strftime("%B %Y")
-    })
+      date: date |> Date.beginning_of_month(),
+      slug: date |> Calendar.strftime("%B-%Y") |> String.downcase(),
+      name: date |> Calendar.strftime("%B %Y")
+    }
     |> create_budget()
   end
 

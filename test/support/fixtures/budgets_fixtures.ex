@@ -8,26 +8,24 @@ defmodule DraperwebPhx.BudgetsFixtures do
   Generate a unique budget date.
   """
   def unique_budget_date do
-    raise "implement the logic to generate a unique budget date"
+    Date.utc_today()
   end
-
-  @doc """
-  Generate a unique budget slug.
-  """
-  def unique_budget_slug, do: "some slug#{System.unique_integer([:positive])}"
 
   @doc """
   Generate a budget.
   """
-  def budget_fixture(attrs \\ %{}) do
+  def monthly_budget_fixture(date \\ unique_budget_date()) do
+    {:ok, budget} =
+      date
+      |> DraperwebPhx.Budgets.create_monthly_budget()
+
+    budget
+  end
+
+  def experimental_budget_fixture(attrs \\ %{}) do
     {:ok, budget} =
       attrs
-      |> Enum.into(%{
-        date: unique_budget_date(),
-        experimental: true,
-        slug: unique_budget_slug()
-      })
-      |> DraperwebPhx.Budgets.create_budget()
+      |> DraperwebPhx.Budgets.create_experimental_budget()
 
     budget
   end
